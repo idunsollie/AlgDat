@@ -2,10 +2,28 @@ package org.pg4200.ex02;
 
 import org.pg4200.les02.queue.MyQueue;
 
+/*
+Write a class called `MyRingArrayQueue` that implements `MyQueue`.
+Internally, it should be similar to the implementation of `MyQueueArray`,
+but with a fundamental performance improvement.
+When by adding many elements the `tail` index reaches the end of the internal array,
+**instead of** shifting elements to the left or copying over to a new larger array,
+the `tail` should start back from `0`, unless of course `head==0`.
+
+The idea is to reuse the empty spaces before `head` when `head>0`.
+Note, when `head==0`, or when `tail` increases so much that it reaches `head`, then it would
+mean that the array is completely full, and you need to copy over to a new internal array.
+
+Write a `MyRingArrayQueueTest` that extends `MyQueueTestTemplate`.
+If your implementation is correct, all tests should pass.
+Run the tests with code coverage enabled, and verify that all of the instructions in your
+code are covered. If not, add new tests to `MyRingArrayQueueTest`.
+*/
+
 public class MyRingArrayQueue<T> implements MyQueue<T> {
 
     protected Object[] data;
-
+    //Default values for the start
     private int head = -1;
     private int tail = -1;
 
@@ -24,49 +42,52 @@ public class MyRingArrayQueue<T> implements MyQueue<T> {
         //If head is smaller or same as tail it means the array have elements
         }else if(head <= tail){
 
+            //Check if its space in the end of the array
             if(tail < data.length -1){
-                //Still space
-                tail++;
+                tail++;//This will be the index for where the value should be inserted
             }else{
-                //Start to fill it up from the start, but only if its space
-                if(head != 0){
-                    tail = 0; //-->If head !=0 it means that it's space in the start and we can start filling
-                }else{
-                    //If the Array is full we will copy it to a new array
-                    Object[] newArray = new Object[2*data.length];
+                //Its not space in the end of the array so we have to check if its space in the start of the array
 
+                if(head != 0){
+                    //If the head != 0 it means it space before the head hand we can fill values in the start of the array
+                    tail = 0;//This will be the index for where the values should be inserted
+                }else{
+                    //The array is full so we make the array double it size and copy it over
+
+                    Object[] newArray = new Object[2*data.length];
                     for (int i = 0; i < data.length; i++){
-                        newArray[i] = data[i]; //--> use head to make sure you dont copy empty space
+                        newArray[i] = data[i];
                     }
-                    //head = 0;
-                    tail++;
-                    data = newArray;
+                    tail++;//This will be the index for where the values should be inserted
+                    data = newArray;//Sets the data to be get the value from the copy
                 }
             }
-
-
         }else{
-            //TODO: assert?
-            //TODO: check if it's full in the back?
-
+            //The tail is smaller than the head
             if(tail < head -1){
-                //Still space
-                tail++;
+                //This means that it's still space between the tail and head
+                tail++;//This will be the index for where the values should be inserted
             }else{
-                //No spcae in the end and the array is totaly full, copy to new array
+                //The array is full so we make the array double it size and copy it over
                 Object[] newArray = new Object[2*data.length];
-
-                //Move the elements after the head
-                int placementOfHead = data.length - head;
-                int placementOfTail = tail + 1;
-                for(int j = 0; j < placementOfHead; j++){
-                    newArray[j] = data[j + head];
+                
+                //To make sure that all the elements in thw new array will be in the right order we will 
+                // move one part of the time
+                
+                int amountCopyHead = data.length - head;
+                int amountCopyTail = tail + 1;
+                
+                //Copy elements ¨
+                for(int i = 0; i < amountCopyHead; i++){
+                    newArray[i] = data[i + head];
                 }
 
                 //Move the elements behind tail
-                for(int i = 0; i < placementOfTail; i++){
-                    newArray[placementOfHead + i] = data[i];
+                for(int j = 0; j < amountCopyTail; j++){
+                    newArray[amountCopyHead + j] = data[j];
                 }
+
+                //Sets the head and tail to standard
                 head = 0;
                 tail = data.length;
                 data = newArray;
@@ -77,6 +98,7 @@ public class MyRingArrayQueue<T> implements MyQueue<T> {
 
     @Override
     public T dequeue() {
+        //Check if the array is empty
         if(isEmpty()){
             throw new RuntimeException();
         }
@@ -84,26 +106,28 @@ public class MyRingArrayQueue<T> implements MyQueue<T> {
         T value = (T) data[head]; //Gets the value of head
 
         if(size() == 1){
-            //Sets the head and tail to default if you dequeue the last element in the array
+            //We want to dequeue the last element and have to set the head and tail to the default values
             head = -1;
             tail = -1;
         }else{
-            head ++;
+            head ++;//Change the head to the next in the queue
+
+            //If the array is not empty we want to set the head to be the first element of the queue
             if(head >= data.length){
                 head = 0;
             }
         }
 
-        return value;
+        return value;//Return the value
     }
 
     @Override
     public T peek() {
-
+        //Check if the array is empty
         if(isEmpty()){
             throw new RuntimeException();
         }
-        T value = (T) data[head];
+        T value = (T) data[head];//Gets the value of head
 
         return value;
     }
@@ -111,13 +135,14 @@ public class MyRingArrayQueue<T> implements MyQueue<T> {
     @Override
     public int size() {
 
-        //TODO: how manny elemnt are in the array?
-
         if(head < 0){
+            //Array is empty
             return 0;
         }else if(head <= tail){
+            //Head are smaller or same as tail so we have a "normal" array
             return (tail - head) + 1;
         }else{
+            //Head are bigger than tail so we have a "unmoral" array
             return (data.length - head) + (tail + 1);
         }
     }

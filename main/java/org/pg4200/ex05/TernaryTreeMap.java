@@ -131,7 +131,7 @@ public class TernaryTreeMap<K extends Comparable<K>, V> implements MyMapTreeBase
         size--;
 
         //When we have delete something we have to se how many children the node has
-
+        return subtreeRoot;
     }
 
     @Override
