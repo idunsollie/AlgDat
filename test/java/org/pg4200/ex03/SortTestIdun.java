@@ -17,13 +17,12 @@ public abstract class SortTestIdun {
 
     @BeforeEach
     public void init(){
-
         sorter = getInstance();
     }
 
     @Test
     public void testNull(){
-        //should not throw an exception
+        //Should not throw an exception
         sorter.sort(null);
     }
 
@@ -84,33 +83,20 @@ public abstract class SortTestIdun {
 
         Random random = new Random();
 
-        for(int i=0; i<100; i++){ // för 100 randoom array men längd 10
+        for(int i=0; i<100; i++){
 
+            //Create 100 random arrays with 10 as length
             Integer[] array = new Integer[10];
             for(int j=0; j<array.length; j++){
                 array[j] = random.nextInt(20);
             }
+            sorter.sort(array);//Sort the array
 
-            sorter.sort(array);
-
-            /*
-                Regardless of the input array (which could be random)
-                there are still properties that we can check, and that
-                are independent of the input, like [j] <= [j+1].
-             */
-
-            //går igenom alla elementer
+            //Check all the elements
             for(int j=0; j<array.length-1; j++){
                 assertTrue(array[j] <= array[j+1], Arrays.toString(array));
             }
 
-            /*
-                Is the above check enough to determine if an array is
-                sorted???
-
-                What if an implementation of "sorter.sort" just sets all
-                the values in the array to 0 ???
-             */
         }
 
     }
@@ -122,7 +108,7 @@ public abstract class SortTestIdun {
 
         sorter.sort(array);
 
-        //går igenom alla elementer
+        //Check the elements
         for(int j=0; j<array.length-1; j++){
             assertTrue(array[j] <= array[j+1], Arrays.toString(array));
         }

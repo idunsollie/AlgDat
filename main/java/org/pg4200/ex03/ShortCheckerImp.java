@@ -1,4 +1,12 @@
 package org.pg4200.ex03;
+/*
+Develop a class called `SortCheckerImp` and that implements
+the interface `org.pg4200.ex03.SortChecker`.
+Develop a test class called `SortCheckerImpTest` that
+does extend `org.pg4200.ex03.SortCheckerTestTemplate`,
+in which you test your `SortCheckerImp` implementation.
+If it is correct, all tests should pass.
+*/
 
 public class ShortCheckerImp implements SortChecker{
 
